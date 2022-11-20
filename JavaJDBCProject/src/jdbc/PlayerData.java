@@ -7,19 +7,18 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.swing.JOptionPane;
 
 public class PlayerData {
 	//driver and database info
 	  static final String DRIVER = "oracle.jdbc.OracleDriver";             
-	  static final String DATABASE_URL = "jdbc:oracle:thin:@oracle1.centennialcollege.ca:1521:SQLD";
+	  static final String DATABASE_URL = "jdbc:oracle:thin:@199.212.26.208:1521:SQLD";
 	  static final String USERNAME ="COMP228_m22_sl_40";
 	  static final String PASSWORD = "password";
 	  //
-	  private List <String> records = new ArrayList<>();
+	  private String record[] = new String[8];
 	  //JDBC objects
 	  private ResultSet rs;
 	  private Connection connection;
@@ -42,7 +41,7 @@ public class PlayerData {
 	    	// load the driver class
 		    Class.forName( DRIVER );
 		    // establish connection to database                              
-		    connection = DriverManager.getConnection( DATABASE_URL, "COMP228_m22_sl_40", "password" );
+		    connection = DriverManager.getConnection( DATABASE_URL, USERNAME, PASSWORD);
 
 	    }
 	    catch(Exception e) {
@@ -50,7 +49,7 @@ public class PlayerData {
 	    }
 	  } //openConnection
 	  
-	  public ArrayList<String> loadCurrentRecord(String strQuery)
+	  public String[] loadCurrentRecord(String strQuery)
 	  {
 	      try {
 	        st = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
@@ -59,13 +58,13 @@ public class PlayerData {
 	        nCols=md.getColumnCount();
 	        if(rs.last())
 	        {
-	            records=getRow();
+	            record=getRow();
 	        }
 	      }
 	      catch(Exception e) {
 	      	e.printStackTrace();
 	      }
-	    return (ArrayList<String>) records;
+	    return record;
 	  } //loadCurrentRecord
 	  public void closeConnection()
 	  {
@@ -77,79 +76,105 @@ public class PlayerData {
 	      System.out.println(e.toString());
 	      }
 	  } //closeConnection
-	  public ArrayList<String> moveNext()
+	  public String[] moveNext()
 	  {
 	      try {
 	        if(rs.next() && !rs.isAfterLast())
 	        {
-	          records=getRow();
+	          record=getRow();
 	        }
 	        else
 	        {
-	            records=moveLast();
+	            record=moveLast();
 	            JOptionPane.showMessageDialog(null,"End of Records!", "TestJDBC",JOptionPane.INFORMATION_MESSAGE);
 	        }
 	      }
 	      catch(Exception e) {
 	      }
-	    return (ArrayList<String>) records;
+	    return record;
 	  }
-	  public ArrayList<String> moveLast()
+	  public String[] moveLast()
 	  {
 	      try {
 	            rs.last();
-	            records=getRow();
+	            record=getRow();
 	      }
 	      catch(Exception e) {
 	      System.out.println(e.toString());
 	      }
-	      return (ArrayList<String>) records;
+	      return record;
 	  } //moveLast()
-	  public ArrayList<String> moveFirst()
+	  public String[] moveFirst()
 	  {
 	      try {
 	            rs.first();
-	            records=getRow();
+	            record=getRow();
 	      }
 	      catch(Exception e) {
 	      System.out.println(e.toString());
 	      }
-	      return (ArrayList<String>) records;
+	      return record;
 	  } //moveFirst()
-	  public ArrayList<String> movePrevious()
+	  public String[] movePrevious()
 	  {
 	      try {
 	            if(rs.previous() && !rs.isBeforeFirst())
 	            {
-	              records=getRow();
+	              record=getRow();
 	            }
 	            else
 	            {
-	              records=moveFirst();
+	              record=moveFirst();
 	              JOptionPane.showMessageDialog(null,"Beginning of Records!", "TestJDBC",JOptionPane.INFORMATION_MESSAGE);
 	            }
 	      }
 	      catch(Exception e) {
 	      System.out.println(e.toString());
 	      }
-	    return (ArrayList<String>) records;
+	    return record;
 	  } //movePrevious()
-	  public ArrayList<String> getRow()
+	  /*
+	  public void insertRow(String playerId, String playerFirstName, String playerLastName, String address, String postCode, String province, String phoneNum)
+		{
+			try {
+				
+				pst = connection.prepareStatement("INSERT INTO Player (PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?);");
+				//pst.setString(1, playerId);
+				pst.setString(1, playerFirstName); 
+				pst.setString(2, playerLastName);
+				
+				pst.setString(3, address);
+				pst.setString(4, postCode);
+				pst.setString(5, province);
+				pst.setString(6, phoneNum);
+
+				
+				//Execute the prepared statement using executeUpdate method:  
+				int val = pst.executeUpdate(); //returns the row count
+				pst.close();
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		*/
+	  public String[] getRow()
 	  {
 	      try{
-	              for(int i=1; i<= nCols; i++) {
-	              	records.set(i-1,rs.getString(i));
-	              }
+	              for(int i=1; i<= nCols; i++)
+	              	record[i-1]=rs.getString(i);
 	        }
 	      catch(SQLException e)
 	      	{e.printStackTrace();}
-	    return (ArrayList<String>) records;
+	    return record;
 	  }
 	  public void saveRow(String record[])
 	  {
 
 	      try {
-	  	    	pst = connection.prepareStatement("insert into Students (studentID, firstName, lastName, address, city, province, postalCode) VALUES(?,?,?,?,?,?,?)");
+//	  	    	pst = connection.prepareStatement("INSERT INTO Player (PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER) VALUES (, ?, ?, ?, ?, ?, ?)");
 
 	            /** The following works when the driver supports insertRow method
 	            rs.moveToInsertRow();
@@ -166,7 +191,7 @@ public class PlayerData {
 	            }
 	            int val = pst.executeUpdate();
 	            pst.close(); //close to make changes completed
-	            loadCurrentRecord("Select * from Students"); //open it again
+	            loadCurrentRecord("Select * from Player"); //open it again
 	      }
 	      catch(Exception e) {
 	      	e.printStackTrace();
@@ -187,17 +212,17 @@ public class PlayerData {
 	            //
 	          	//this code updates the row using a prepared statement
 	            updateSt = connection.prepareStatement(
-	            		"Update Students set firstname = ?, lastname = ?,address = ?,city = ?, province = ?,postalCode = ? where studentid = ?");
-	            //set values for all parameters excluding studentid
+	            		"Update Player set first_name = ?, last_name = ?,address = ?,postal_code = ?, province = ?,phone_number = ? where player_id = ?");
+	            //set values for all parameters excluding player id
 	    	  	for(int i=2; i<= nCols; i++)
 	            {
 	    	  		updateSt.setString(i-1,record[i-1]);
 	            }
-	    	  	//set the value for studentid parameter
+	    	  	//set the value for player id parameter
 	    	  	updateSt.setString(7,record[0]);
 	            int val = updateSt.executeUpdate();
 	            updateSt.close(); //close to make changes completed
-	            loadCurrentRecord("Select * from Students"); //open it again
+	            loadCurrentRecord("Select * from Player"); //open it again
 	            
 	      }
 	      catch(Exception e) {
@@ -209,12 +234,10 @@ public class PlayerData {
 	      try {
 	              rs.deleteRow();
 	              rs.close();
-	              loadCurrentRecord("Select * from Students"); //open it again
+	              loadCurrentRecord("Select * from Player"); //open it again
 	      }
 	      catch(Exception e) {
 	      	e.printStackTrace();
 	      }
 	  } // deleteRow
-
-
 }

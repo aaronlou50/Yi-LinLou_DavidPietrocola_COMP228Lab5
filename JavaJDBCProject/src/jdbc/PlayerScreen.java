@@ -6,10 +6,18 @@ import javax.swing.*;
 
 class PlayerScreen extends JFrame {
     //
-    private Student player;
+	//variables
+	private String playerID;
+	private String playerFirstName;
+	private String playerLastName;
+	private String address;
+	private String postCode;
+	private String province;
+	private String phoneNum;
+    private Player player;
     JLabel lbl[] = new JLabel[6];
-    String lblNames[] = {"First Name:", "Last Name:", "Address:",
-            "Province:", "Postal Code:", "Phone Number:"};
+    String lblNames[] = {"Player ID", "First Name:", "Last Name:", "Address:",
+            "Province:", "Postal Code:", "Phone Number:"}; //added player id
     JLabel gamelbl[] = new JLabel[3];
     String gamelblNames[] = {"Game Title:", "Played on:", "Score:"};
     int txtWidths[] = {10, 10, 15, 4, 10, 10, 6};
@@ -21,7 +29,8 @@ class PlayerScreen extends JFrame {
     //navigator buttons
     JButton nav[] = new JButton[4];
     String navNames[] = {"First", "Previous", "Next", "Last"};
-    JTextField txt[] = new JTextField[7];
+    //textfields
+    JTextField txt[] = new JTextField[8];
     Font font;
     //
     GridBagLayout gridBag;
@@ -81,12 +90,12 @@ class PlayerScreen extends JFrame {
         //load and show the first record
         try {
             //player = new Player();
-            player = new Student();
+            player = new Player();
             showRow();
         } catch (Exception e) {
             //
         }
-        btn[1].setEnabled(false);
+        //btn[1].setEnabled(true);
         //set the focus to txtName when frame is opened
         addWindowListener(new WindowAdapter() {
             public void windowOpened(WindowEvent e) {
@@ -132,14 +141,14 @@ class PlayerScreen extends JFrame {
 
     //show the row in text fields
     public void showRow() {
-        txt[0].setText(player.getStudentID());
-        txt[1].setText(player.getFirstName());
-        txt[2].setText(player.getLastName());
+        //txt[0].setText(player.getPlayerID());
+        txt[0].setText(player.getPlayerFirstName());
+        txt[1].setText(player.getPlayerLastName());
 
-        txt[3].setText(player.getAddress());
-        txt[4].setText(player.getCity());
-        txt[5].setText(player.getProvince());
-        txt[6].setText(player.getPostalCode());
+        txt[2].setText(player.getAddress());
+        txt[3].setText(player.getPostCode());
+        txt[4].setText(player.getProvince());
+        txt[5].setText(player.getPhoneNum());
     }
 
     //
@@ -149,35 +158,55 @@ class PlayerScreen extends JFrame {
             if (name.equals(btnNames[0])) //add new
             {
                 for (int i = 0; i < txt.length; i++) {
-                    txt[i].setText("");
+                    txt[i].setText(""); //emptying the text fields
                 }
                 txt[0].requestFocus();
+                /*
                 btn[0].setEnabled(false);
+                btn[1].setEnabled(true);
                 btn[2].setEnabled(false);
                 btn[3].setEnabled(false);
-                btn[1].setEnabled(true);
+                btn[4].setEnabled(false);
+                btn[5].setEnabled(false);
+                */
+
             } else if (name.equals(btnNames[1])) //save
             {
                 String row[] = new String[7];
                 readRow(row);
                 try {
-                    player = new Student();
-                    player.saveStudent(row);
+                	//assigning private variables according to the textfields 
+                	playerFirstName=txt[1].getText();
+                	playerLastName=txt[1].getText();
+                	address=txt[1].getText();
+                	postCode=txt[1].getText();
+                	province=txt[1].getText();
+                	phoneNum=txt[1].getText();
+
+                	
+                    player = new Player(playerFirstName, playerLastName, address, postCode,
+                			 province, phoneNum);
+                    player.savePlayer(row);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                /*
                 btn[1].setEnabled(false);
                 btn[0].setEnabled(true);
                 btn[2].setEnabled(true);
                 btn[3].setEnabled(true);
+                btn[4].setEnabled(false);
+                btn[5].setEnabled(false);
+                */
+
             } else if (name.equals(btnNames[2])) //update
             {
                 String row[] = new String[7];
                 readRow(row);
-                player.updateStudent(row);
+                player.updatePlayer(row);
             } else if (name.equals(btnNames[3])) //delete
             {
-                player.deleteStudent();
+                player.deletePlayer();
             }
             else if(name.equals(btnNames[5])) //search
             {
