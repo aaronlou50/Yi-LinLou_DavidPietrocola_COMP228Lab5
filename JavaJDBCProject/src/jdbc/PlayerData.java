@@ -18,7 +18,7 @@ public class PlayerData {
 	  static final String USERNAME ="COMP228_m22_sl_40";
 	  static final String PASSWORD = "password";
 	  //
-	  private String record[] = new String[8];
+	  private String record[] = new String[7];
 	  //JDBC objects
 	  private ResultSet rs;
 	  private Connection connection;
@@ -174,7 +174,7 @@ public class PlayerData {
 	  {
 
 	      try {
-//	  	    	pst = connection.prepareStatement("INSERT INTO Player (PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER) VALUES (, ?, ?, ?, ?, ?, ?)");
+	  	    	pst = connection.prepareStatement("INSERT INTO Player (PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 	            /** The following works when the driver supports insertRow method
 	            rs.moveToInsertRow();
@@ -191,7 +191,9 @@ public class PlayerData {
 	            }
 	            int val = pst.executeUpdate();
 	            pst.close(); //close to make changes completed
-	            loadCurrentRecord("Select * from Player"); //open it again
+	            //loadCurrentRecord("Select Player.* from Player"); //open it again
+	            loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
+
 	      }
 	      catch(Exception e) {
 	      	e.printStackTrace();
@@ -222,8 +224,8 @@ public class PlayerData {
 	    	  	updateSt.setString(7,record[0]);
 	            int val = updateSt.executeUpdate();
 	            updateSt.close(); //close to make changes completed
-	            loadCurrentRecord("Select * from Player"); //open it again
-	            
+	            //loadCurrentRecord("Select Player.* from Player"); //open it again
+	            loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
 	      }
 	      catch(Exception e) {
 	      	e.printStackTrace();
@@ -232,12 +234,18 @@ public class PlayerData {
 	  public void deleteRow()
 	  {
 	      try {
+	            loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
+	              rs.moveToCurrentRow();
 	              rs.deleteRow();
 	              rs.close();
-	              loadCurrentRecord("Select * from Player"); //open it again
+		            loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
+
+	              //loadCurrentRecord("Select Player.* from Player"); //open it again
 	      }
 	      catch(Exception e) {
 	      	e.printStackTrace();
 	      }
+	      JOptionPane.showMessageDialog(null,"The last record has been deleted.", "OK",JOptionPane.INFORMATION_MESSAGE);
+
 	  } // deleteRow
 }

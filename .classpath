@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="JavaJDBCProject/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/lou22/Documents/SoftwareEngineeringEducation/ClassesFall2022/Comp228 Java/Week9/ojdbc6-11.jar/ojdbc6-11.jar"/>
 	<classpathentry kind="output" path="JavaJDBCProject/bin"/>
 </classpath>

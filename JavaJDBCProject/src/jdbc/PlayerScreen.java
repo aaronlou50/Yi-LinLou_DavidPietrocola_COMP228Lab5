@@ -7,7 +7,7 @@ import javax.swing.*;
 class PlayerScreen extends JFrame {
     //
 	//variables
-	private String playerID;
+	private String playerId;
 	private String playerFirstName;
 	private String playerLastName;
 	private String address;
@@ -15,12 +15,12 @@ class PlayerScreen extends JFrame {
 	private String province;
 	private String phoneNum;
     private Player player;
-    JLabel lbl[] = new JLabel[6];
-    String lblNames[] = {"Player ID", "First Name:", "Last Name:", "Address:",
-            "Province:", "Postal Code:", "Phone Number:"}; //added player id
+    JLabel lbl[] = new JLabel[7];
+    String lblNames[] = {"Player ID", "First Name:", "Last Name:", "Address:","Postal Code:",
+            "Province:", "Phone Number:"}; //added player id
     JLabel gamelbl[] = new JLabel[3];
     String gamelblNames[] = {"Game Title:", "Played on:", "Score:"};
-    int txtWidths[] = {10, 10, 15, 4, 10, 10, 6};
+    int txtWidths[] = {10, 10, 10, 15, 6, 2, 10};
 
     //data access buttons
     JButton btn[] = new JButton[6];
@@ -30,7 +30,7 @@ class PlayerScreen extends JFrame {
     JButton nav[] = new JButton[4];
     String navNames[] = {"First", "Previous", "Next", "Last"};
     //textfields
-    JTextField txt[] = new JTextField[8];
+    JTextField txt[] = new JTextField[7];
     Font font;
     //
     GridBagLayout gridBag;
@@ -42,7 +42,7 @@ class PlayerScreen extends JFrame {
         //
         Container c = getContentPane();
         c.setLayout(new BorderLayout());
-        this.setSize(500, 300);
+        this.setSize(500, 400);
         this.setTitle("Player Information");
         //	Set the GridBagLayout for the frame
         screen = new JPanel();
@@ -132,23 +132,29 @@ class PlayerScreen extends JFrame {
 
     //
     //read values from text fields
+    
     public void readRow(String row[]) {
         for (int i = 0; i < txt.length; i++) {
-            row[i] = txt[i].getText();
+        	String text = txt[i].getText();
+        	row[i]=text;
+            //row[i] = txt[i].getText();
+            System.out.println(row[i]);
+
         }
 
     }
+    
 
     //show the row in text fields
     public void showRow() {
-        //txt[0].setText(player.getPlayerID());
-        txt[0].setText(player.getPlayerFirstName());
-        txt[1].setText(player.getPlayerLastName());
+        txt[0].setText(player.getPlayerID());
+        txt[1].setText(player.getPlayerFirstName());
+        txt[2].setText(player.getPlayerLastName());
 
-        txt[2].setText(player.getAddress());
-        txt[3].setText(player.getPostCode());
-        txt[4].setText(player.getProvince());
-        txt[5].setText(player.getPhoneNum());
+        txt[3].setText(player.getAddress());
+        txt[4].setText(player.getPostCode());
+        txt[5].setText(player.getProvince());
+        txt[6].setText(player.getPhoneNum());
     }
 
     //
@@ -161,14 +167,14 @@ class PlayerScreen extends JFrame {
                     txt[i].setText(""); //emptying the text fields
                 }
                 txt[0].requestFocus();
-                /*
+                
                 btn[0].setEnabled(false);
                 btn[1].setEnabled(true);
                 btn[2].setEnabled(false);
                 btn[3].setEnabled(false);
                 btn[4].setEnabled(false);
                 btn[5].setEnabled(false);
-                */
+                
 
             } else if (name.equals(btnNames[1])) //save
             {
@@ -176,28 +182,34 @@ class PlayerScreen extends JFrame {
                 readRow(row);
                 try {
                 	//assigning private variables according to the textfields 
+                	/*
+                	playerId=txt[0].getText();
                 	playerFirstName=txt[1].getText();
-                	playerLastName=txt[1].getText();
-                	address=txt[1].getText();
-                	postCode=txt[1].getText();
-                	province=txt[1].getText();
-                	phoneNum=txt[1].getText();
+                	playerLastName=txt[2].getText();
+                	address=txt[3].getText();
+                	postCode=txt[4].getText();
+                	province=txt[5].getText();
+                	phoneNum=txt[6].getText();
+                	*/
 
-                	
-                    player = new Player(playerFirstName, playerLastName, address, postCode,
+                	player = new Player();
+                	player.savePlayer(row);
+					/*
+                    player = new Player(playerId, playerFirstName, playerLastName, address, postCode,
                 			 province, phoneNum);
-                    player.savePlayer(row);
+                			 */
+                    //player.savePlayer(row);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                /*
+                
                 btn[1].setEnabled(false);
                 btn[0].setEnabled(true);
                 btn[2].setEnabled(true);
                 btn[3].setEnabled(true);
-                btn[4].setEnabled(false);
-                btn[5].setEnabled(false);
-                */
+                btn[4].setEnabled(true);
+                btn[5].setEnabled(true);
+                
 
             } else if (name.equals(btnNames[2])) //update
             {
@@ -207,6 +219,9 @@ class PlayerScreen extends JFrame {
             } else if (name.equals(btnNames[3])) //delete
             {
                 player.deletePlayer();
+                for (int i = 0; i < txt.length; i++) {
+                    txt[i].setText(""); //emptying the text fields
+                }
             }
             else if(name.equals(btnNames[5])) //search
             {
@@ -242,7 +257,8 @@ class PlayerScreen extends JFrame {
             } else if (name.equals(navNames[3])) //delete
             {
                 String row[] = new String[7];
-                row = player.moveToLast();
+                //readRow(row);
+                row = player.getCurrentRecord();
                 showRow();
             }
 
@@ -270,4 +286,4 @@ class PlayerScreen extends JFrame {
 
     }
 
-} //end of StudentScreen class
+} //end of PlayerScreen class

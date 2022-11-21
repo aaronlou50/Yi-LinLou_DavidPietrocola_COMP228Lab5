@@ -26,10 +26,10 @@ public class Player {
 			province = record[5];
 			phoneNum=record[6];
 		}
-	public Player( String playerFirstName, String playerLastName, String address, String postCode,
+	public Player( String playerID, String playerFirstName, String playerLastName, String address, String postCode,
 			String province, String phoneNum) {
 		super();
-		//this.playerID = playerID;
+		this.playerID = playerID;
 		this.playerFirstName = playerFirstName;
 		this.playerLastName = playerLastName;
 		this.address = address;
@@ -93,6 +93,12 @@ public class Player {
 	public void setPhoneNum(String phoneNum) {
 		this.phoneNum = phoneNum;
 	}
+	//method to get current record
+	public String[]getCurrentRecord(){
+		record = playerData.getRow();
+		refreshPlayerData(record);
+		return record;
+	}
 	
 	public String[] moveToNext()
 	{
@@ -133,6 +139,7 @@ public class Player {
 	}
 	public void deletePlayer()
 	{
+		
 		playerData.deleteRow();
 	}
 
