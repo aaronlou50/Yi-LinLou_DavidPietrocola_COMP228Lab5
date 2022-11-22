@@ -138,7 +138,7 @@ class PlayerScreen extends JFrame {
         	String text = txt[i].getText();
         	row[i]=text;
             //row[i] = txt[i].getText();
-            System.out.println(row[i]);
+            //System.out.println(row[i]);
 
         }
 

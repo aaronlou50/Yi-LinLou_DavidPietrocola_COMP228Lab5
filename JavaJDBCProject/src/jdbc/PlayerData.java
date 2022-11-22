@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 public class PlayerData {
 	//driver and database info
 	  static final String DRIVER = "oracle.jdbc.OracleDriver";             
-	  static final String DATABASE_URL = "jdbc:oracle:thin:@199.212.26.208:1521:SQLD";
+	  static final String DATABASE_URL = "jdbc:oracle:thin:@oracle1.centennialcollege.ca:1521:SQLD";
 	  static final String USERNAME ="COMP228_m22_sl_40";
 	  static final String PASSWORD = "password";
 	  //
@@ -56,10 +56,13 @@ public class PlayerData {
 	        rs = st.executeQuery(strQuery);
 	        ResultSetMetaData md = rs.getMetaData();
 	        nCols=md.getColumnCount();
+	        //record=getRow();
+	        
 	        if(rs.last())
 	        {
 	            record=getRow();
 	        }
+	        
 	      }
 	      catch(Exception e) {
 	      	e.printStackTrace();
@@ -234,8 +237,15 @@ public class PlayerData {
 	  public void deleteRow()
 	  {
 	      try {
-	            loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
-	              rs.moveToCurrentRow();
+	            String[] currentRecord = loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
+	              //rs.moveToCurrentRow();
+	            rs.beforeFirst();
+	             while( rs.next()) {
+	            	 if (rs.getString(rs.getRow()).equals(currentRecord)) {
+	            		//need to fix this and make the pointer pointing at the curent record 
+	            	 }
+	            	 
+	             }
 	              rs.deleteRow();
 	              rs.close();
 		            loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
