@@ -23,10 +23,11 @@ public class PlayerData {
 	  private ResultSet rs;
 	  private Connection connection;
 	  private Statement st;
-	  private PreparedStatement pst, updateSt;
+	  private PreparedStatement pst, updateSt, deleteSt;
 	  private Statement maxSt;
 	  private ResultSet maxrs;
 	  boolean more=true;
+	  protected int navIndex; //this variable will store the current record viewed by the user
 	  int nCols;
 	  //
 	  public PlayerData() throws SQLException {
@@ -57,7 +58,11 @@ public class PlayerData {
 	        ResultSetMetaData md = rs.getMetaData();
 	        nCols=md.getColumnCount();
 	        //record=getRow();
-	        
+	        //moves the pointer to the first row of records and stores the location to the navIndex
+	        /*if (rs.absolute(1)) {
+	        	navIndex =1;
+	        	record = getRow();
+	        }*/
 	        if(rs.last())
 	        {
 	            record=getRow();
@@ -84,7 +89,9 @@ public class PlayerData {
 	      try {
 	        if(rs.next() && !rs.isAfterLast())
 	        {
-	          record=getRow();
+	        	navIndex+=1; //update the loacation of record
+	      
+	            record=getRow();
 	        }
 	        else
 	        {
@@ -166,8 +173,11 @@ public class PlayerData {
 	  public String[] getRow()
 	  {
 	      try{
-	              for(int i=1; i<= nCols; i++)
-	              	record[i-1]=rs.getString(i);
+	           
+	    	  
+	    	  for(int i=1; i<= nCols; i++)
+	              	record[i-1]=rs.getString(i); 
+	              
 	        }
 	      catch(SQLException e)
 	      	{e.printStackTrace();}
@@ -237,19 +247,35 @@ public class PlayerData {
 	  public void deleteRow()
 	  {
 	      try {
-	            String[] currentRecord = loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
-	              //rs.moveToCurrentRow();
-	            rs.beforeFirst();
-	             while( rs.next()) {
-	            	 if (rs.getString(rs.getRow()).equals(currentRecord)) {
-	            		//need to fix this and make the pointer pointing at the curent record 
-	            	 }
-	            	 
-	             }
-	              rs.deleteRow();
-	              rs.close();
+	    	    if(rs.absolute(rs.getRow())) {
+	    	    	deleteSt = connection.prepareStatement("DELETE FROM player WHERE player_id = ?");
+		    	  	deleteSt.setString(1, record[0]);
+		    	  
+		    	  	  int val = deleteSt.executeUpdate();
+			          deleteSt.close();
+	    	    };
+	    	  	
+	              //deleteSt.close();
+	              
 		            loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
 
+		            /*String[] currentRecord = loadCurrentRecord("SELECT PLAYER_ID, FIRST_NAME, LAST_NAME, ADDRESS, POSTAL_CODE, PROVINCE, PHONE_NUMBER FROM player");
+		              
+		            //rs.moveToCurrentRow();
+		            //rs.beforeFirst();
+		            if (rs.getString(1).equals(currentRecord[0])) {
+	            		//need to fix this and make the pointer pointing at the curent record 
+	            		
+	            		
+	            		 rs.absolute(rs.getRow());
+	            		 rs.deleteRow();
+		             //while( rs.next()) {
+		            	 
+		            	 //}
+		            	 
+		             }
+		              rs.deleteRow();
+		              */
 	              //loadCurrentRecord("Select Player.* from Player"); //open it again
 	      }
 	      catch(Exception e) {
